@@ -67,3 +67,30 @@ jobs:
       - name: Итоги экспериментов с EF Core
         if: ${{ !cancelled() }}
         run: python3 .github/scripts/test-summary.py "Эксперименты с EF Core" TestResults
+
+      # ВРЕМЕННО: вытаскиваю в аннотацию версии пакетов и вывод тестов, чтобы сверить SQL с руководством
+      - name: DEBUG (временный шаг)
+        if: ${{ !cancelled() }}
+        run: |
+          python3 - <<'PY'
+          import glob, subprocess, xml.etree.ElementTree as ET
+          ns = {"t": "http://microsoft.com/schemas/VisualStudio/TeamTest/2010"}
+
+          def esc(text):
+              return text.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+
+          packages = subprocess.run(
+              ["dotnet", "list", "tests/CoreLinq.EfCore.Experiments", "package", "--include-transitive"],
+              capture_output=True, text=True).stdout
+          wanted = [" ".join(l.split()) for l in packages.splitlines()
+                    if any(k in l for k in ("EntityFrameworkCore", "Data.Sqlite", "SQLitePCLRaw", "Castle"))]
+          print("::notice title=DEBUG packages::" + esc("\n".join(wanted)))
+
+          parts = []
+          for f in sorted(glob.glob("TestResults/**/*.trx", recursive=True)):
+              for r in ET.parse(f).getroot().iter("{%s}UnitTestResult" % ns["t"]):
+                  out = r.findtext("t:Output/t:StdOut", default="", namespaces=ns).strip()
+                  if out:
+                      parts.append("### " + r.get("testName").split(".")[-1] + "\n" + out)
+          print("::notice title=DEBUG stdout::" + esc("\n\n".join(parts)[:60000]))
+          PY
