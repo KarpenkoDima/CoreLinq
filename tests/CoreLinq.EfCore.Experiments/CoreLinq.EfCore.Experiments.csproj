@@ -18,9 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Плавающая версия 10.0.*: берём последний патч EF Core 10. После первого зелёного прогона можно зафиксировать точную. -->
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.*" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="10.0.*" />
+    <!-- Версия EF Core зафиксирована: первый прогон в CI шёл на 10.0.13. При обновлении смотри, не изменились ли SQL и тексты ошибок: тесты это проверят. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="10.0.13" />
   </ItemGroup>
 
   <ItemGroup>
