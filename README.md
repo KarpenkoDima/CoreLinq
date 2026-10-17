@@ -24,6 +24,7 @@
 
 ```bash
 dotnet test tests/CoreLinq.Tests
+# если стоит только .NET 10: dotnet test tests/CoreLinq.Tests -f net10.0
 
 # EF Core: с подробным логом, чтобы увидеть SQL, который печатают тесты
 dotnet test tests/CoreLinq.EfCore.Experiments --logger "console;verbosity=detailed"
