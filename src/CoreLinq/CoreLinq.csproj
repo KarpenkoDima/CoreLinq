@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <RootNamespace>CoreLinq</RootNamespace>
+    <AssemblyName>CoreLinq</AssemblyName>
+    <!-- Код в методичке написан без nullable и без namespace, чтобы его можно было просто скопировать в проект. -->
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <Description>Учебная реализация LINQ: MyWhere, MySelect, MyOrderBy/MyThenBy, MyGroupBy и другие методы из методички «LINQ под капотом».</Description>
+  </PropertyGroup>
+
+</Project>
