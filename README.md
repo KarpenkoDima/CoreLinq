@@ -68,6 +68,8 @@ dotnet test tests/CoreLinq.EfCore.Experiments --logger "console;verbosity=detail
 
 Workflow `.github/workflows/ci.yml` запускается на каждый push в `main`, на каждый pull request и вручную. В нём два параллельных задания: тесты `MyLinq` на net8.0 и net10.0 и эксперименты с EF Core. Задание с EF Core запускается с `verbosity=detailed`, поэтому SQL видно прямо в логе прогона.
 
+После тестов шаг `.github/scripts/test-summary.py` читает TRX-файлы и собирает сводку на странице прогона: таблицу итогов по каждому фреймворку и, под спойлером у каждого теста, всё, что тест вывел (в экспериментах с EF Core это SQL). Упавшие тесты дополнительно попадают в аннотации. Раннер зафиксирован на `ubuntu-24.04`, чтобы прогон не менялся сам по себе, когда `ubuntu-latest` переедет на новую версию.
+
 ## Лицензия
 
 MIT, см. [LICENSE](LICENSE).

@@ -21,7 +21,7 @@ env:
 jobs:
   linq:
     name: MyLinq и методичка (net8.0 + net10.0)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
@@ -32,13 +32,22 @@ jobs:
             8.0.x
             10.0.x
 
-      # Проект тестов собирается под оба TFM, dotnet test прогоняет их по очереди
+      # Проект тестов собирается под оба TFM, dotnet test прогоняет их по очереди.
+      # TRX нужен итоговому шагу ниже
       - name: Тесты MyLinq
-        run: dotnet test tests/CoreLinq.Tests -c Release --logger "console;verbosity=normal"
+        run: >
+          dotnet test tests/CoreLinq.Tests -c Release
+          --logger "console;verbosity=normal"
+          --logger trx --results-directory TestResults
+
+      # Таблица итогов на странице прогона и аннотации; без этого шага счётчик тестов виден только в сыром логе
+      - name: Итоги тестов MyLinq
+        if: ${{ !cancelled() }}
+        run: python3 .github/scripts/test-summary.py "Тесты MyLinq" TestResults
 
   efcore:
     name: Эксперименты с EF Core (SQLite, net10.0)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
@@ -49,4 +58,12 @@ jobs:
 
       # verbosity=detailed нужен, чтобы в логе были SQL-запросы, которые тесты печатают через ITestOutputHelper
       - name: Эксперименты с EF Core
-        run: dotnet test tests/CoreLinq.EfCore.Experiments -c Release --logger "console;verbosity=detailed"
+        run: >
+          dotnet test tests/CoreLinq.EfCore.Experiments -c Release
+          --logger "console;verbosity=detailed"
+          --logger trx --results-directory TestResults
+
+      # SQL каждого эксперимента попадает в сводку прогона: открой страницу прогона и разверни нужный тест
+      - name: Итоги экспериментов с EF Core
+        if: ${{ !cancelled() }}
+        run: python3 .github/scripts/test-summary.py "Эксперименты с EF Core" TestResults
